@@ -81,7 +81,7 @@ public class Main {
 		                a.fill = GridBagConstraints.BOTH; // 컴포넌트의 크기가 셀의 크기보다 작을 때, 채울 방법
 		                
 		                a.insets = new Insets(0, 0, 0, 0); // 컴포넌트와 셀의 간격
-		                
+		                //
 		                //btnPanel 제약조건
 		                GridBagConstraints b = new GridBagConstraints();
 		                b.gridx = 0; // 컴포넌트가 위치할 열 번호

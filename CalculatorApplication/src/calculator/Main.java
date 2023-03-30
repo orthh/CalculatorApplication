@@ -1,5 +1,7 @@
 package calculator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -25,13 +27,20 @@ public class Main {
 	    		|| c == '*' || c == '/' || 
 	    		c== '%' || c=='.';
 	}
+	
+	public static ArrayList<String> numArr 
+		= new ArrayList<String>();
+
+	public static ArrayList<String> operArr 
+	= new ArrayList<String>();
+
 
 	public static void main(String[] args) {
 		//입력값 저장
 		//String input = "1+2+3";
 		
 		//기록창
-		String record = "<html><p>첫번째 줄<p><p>두번째 줄<p></html>";
+		String record = "<html><p>첫번째 줄</p><p>두번째 줄</p></html>";
 		//C를 눌르면 초기화X
 		//CE 누르면 초기화O
 		
@@ -116,11 +125,22 @@ public class Main {
                     		//inputField입력값 가져오기
                     		String text = inputField.getText();
 	                   		System.out.println(text);
-	                   		//text를 하나하나 거쳐서 연산기호가 나오면 ArrayList에 구 전 num추가,
+	                   		//text를 하나하나 거쳐서 연산기호가 나오면 ArrayList에 전 num추가,
 	                   		
-	                   		//num초기화
 	                   		
-	                   		//연산기호 ArrayList 다른거?에 추가
+	                   		//숫자 파싱해 numArr에 집어넣기
+	                   		String numRegExp = "[+\\-X%/]";
+	                   		String[] items = text.split(numRegExp);
+	                   		for(String item : items) {
+	                   			Main.numArr.add(item);
+	                   		}
+	                   		for(String item : Main.numArr) {
+	                   			System.out.println(item);
+	                   		}
+	                   		//연산자 파싱해 operArr에 집어넣기
+	              
+	                   		//배열 순서대로 계산
+	                   		//우선순위는 일단 나중에
 	                   		
 	                   		//계산
 	                   		//mode로 나눠서 연산기호 종류에따라

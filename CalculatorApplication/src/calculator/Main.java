@@ -138,7 +138,9 @@ public class Main {
 	                   			System.out.println(item);
 	                   		}
 	                   		//연산자 파싱해 operArr에 집어넣기
-	              
+	                   		//잠시스톱!!!
+	                   		//스택으로 풀면 쉽다함
+	                   		
 	                   		//배열 순서대로 계산
 	                   		//우선순위는 일단 나중에
 	                   		

@@ -28,6 +28,37 @@ public class Main {
 	    		c== '%' || c=='.';
 	}
 	
+	public static double calcValue(String oper, String n1, String n2) {
+		int num1 = Integer.parseInt(n1);
+		int num2 = Integer.parseInt(n2);
+		int result;
+		switch (oper) {
+		case "+":
+			result =  num1 + num2;
+			break;
+		case "-":
+			result =  num1 - num2;
+			break;
+		case "*":
+			result =  num1 * num2;
+			break;
+		case "/":
+			result =  num1 / num2;
+			break;
+		case "%":
+			result =  num1 % num2;
+			break;
+
+		default: result = -9999;
+			break;
+		}
+		
+		
+		return result;
+		
+		
+	}
+	
 	public static ArrayList<String> numArr 
 		= new ArrayList<String>();
 
@@ -97,7 +128,8 @@ public class Main {
                     public void keyPressed(KeyEvent e) {
                     	char c = e.getKeyChar();
                     	if(Character.isDigit(c)
-                    			||isOperator(c) ) 
+                    			||isOperator(c)
+                    			|| c == KeyEvent.VK_BACK_SPACE ) 
                     	{
                     		//
                     	}else {
@@ -138,16 +170,30 @@ public class Main {
 	                   			System.out.println(item);
 	                   		}
 	                   		//연산자 파싱해 operArr에 집어넣기
+	                   		String[] opArr = text.split("");
+	                   		for(String item: opArr) {
+	                   			if(item.matches(numRegExp)) {
+	                   				Main.operArr.add(item);
+	                   			}
+	                   		}
+	                   		for(String item : Main.operArr) {
+	                   			System.out.println(item);
+	                   		}
 	                   		//잠시스톱!!!
 	                   		//스택으로 풀면 쉽다함
 	                   		
 	                   		//배열 순서대로 계산
 	                   		//우선순위는 일단 나중에
 	                   		
-	                   		//계산
-	                   		//mode로 나눠서 연산기호 종류에따라
-	                   		//mode값 변경
-	                   		
+	                   		//알고리즘 짜는중
+	                   		int result = 0;
+	                   		int cnt = 0;
+	                   		double temp;
+	                   		for(String item : Main.operArr) {
+	                   			temp = calcValue(item,Main.numArr.get(cnt),Main.numArr.get(cnt+1));
+	                   			System.out.println(temp);
+	                   			cnt++;
+	                   		}
 	                   		
 	                   		//입력값 계산하기
 	                   		

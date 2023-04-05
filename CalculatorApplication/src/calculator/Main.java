@@ -29,8 +29,17 @@ public class Main {
 	    		|| c == '*' || c == '/' || 
 	    		c== '%' || c=='.';
 	}
-	//static String record = "<html><p>첫번째 줄</p><p>두번째 줄</p></html>";
-	static String record = "";
+	static String record = "<html><p>기록</p></html>";
+	
+	public static String addString(String str, String addStr) {
+		String result = str;
+		result = str.substring(0, str.length() - 7);
+		result += "<p>";
+		result += addStr; 
+		result += "</p></html>";
+		
+		return result;
+	}
 	
 
 	public static void main(String[] args) {
@@ -122,16 +131,17 @@ public class Main {
                     		String text = inputField.getText();
 	                   		System.out.println(text);
 	                   		
-	                   		//기록 저장
-	                   		Main.record += text + "\n";
+
+	                   		//계산한값 출력
+	                   		String result = getCalculate(text);
+	                   		inputField.setText(result);
 	                   		
+	                   		//기록 저장
+	                   		Main.record = Main.addString(Main.record, text + " = " + result);
+
 	                   		//기록 출력
 	                   		recordField.setText(Main.record);
-	                   		//계산한값 출력
-	                   		inputField.setText(getCalculate(text));;
 	                   	
-
-	                   		//기록에 저장
                     	}else {
                     		 // 입력 무시
                             e.consume();
@@ -231,7 +241,7 @@ public class Main {
                 
                 //버튼에 이벤트 추가
                 b1.addActionListener(new ButtonActListener(inputField, "C"));
-                b2.addActionListener(new ButtonActListener(inputField,"CE"));
+                b2.addActionListener(new ButtonActListener(inputField,"CE", recordField));
                 b3.addActionListener(new ButtonActListener(inputField,"%"));
                 b4.addActionListener(new ButtonActListener(inputField,"/"));
                 b5.addActionListener(new ButtonActListener(inputField,"7"));
@@ -340,10 +350,16 @@ public class Main {
 	public static class ButtonActListener implements ActionListener{
 		public JTextField label;
 		public String text;
+		public JLabel record;
 		
 		public ButtonActListener(JTextField label, String text) {
 			this.label = label;
 			this.text = text;
+		}
+		public ButtonActListener(JTextField label, String text, JLabel record) {
+			this.label = label;
+			this.text = text;
+			this.record = record;
 		}
 		
 		@Override
@@ -353,6 +369,7 @@ public class Main {
 			
 			if(cur.equals("CE")) { // 전체 초기화 (기록포함)
 				this.label.setText("0");
+				this.record.setText("");
 			}else if(cur.equals("C")){ //기록초기화X)
 				this.label.setText("0");
 			}else if(this.label.getText().equals("0") && (cur.equals("0") || cur.equals(")"))){

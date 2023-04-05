@@ -29,7 +29,8 @@ public class Main {
 	    		|| c == '*' || c == '/' || 
 	    		c== '%' || c=='.';
 	}
-	
+	//static String record = "<html><p>첫번째 줄</p><p>두번째 줄</p></html>";
+	static String record = "";
 	
 
 	public static void main(String[] args) {
@@ -37,10 +38,7 @@ public class Main {
 		//String input = "1+2+3";
 		
 		//기록창
-		String record = "<html><p>첫번째 줄</p><p>두번째 줄</p></html>";
-		//C를 눌르면 초기화X
-		//CE 누르면 초기화O
-		
+
 
 		//일단 만들고 다 끝나고 리팩토링
 		//이벤트 디스패치 스레드에서 실행
@@ -61,7 +59,7 @@ public class Main {
                 //컴포넌트 생성
                 JTextField inputField = new JTextField();
                 JPanel bp = new JPanel(new GridLayout(5, 4));
-                JLabel recordField = new JLabel(record);
+                JLabel recordField = new JLabel(Main.record);
 
                 
                 ///////////inputField 조절
@@ -124,6 +122,11 @@ public class Main {
                     		String text = inputField.getText();
 	                   		System.out.println(text);
 	                   		
+	                   		//기록 저장
+	                   		Main.record += text + "\n";
+	                   		
+	                   		//기록 출력
+	                   		recordField.setText(Main.record);
 	                   		//계산한값 출력
 	                   		inputField.setText(getCalculate(text));;
 	                   	
@@ -226,7 +229,28 @@ public class Main {
                 b15.setBackground(Color.white);
                 b18.setBackground(Color.white);
                 
-                
+                //버튼에 이벤트 추가
+                b1.addActionListener(new ButtonActListener(inputField, "C"));
+                b2.addActionListener(new ButtonActListener(inputField,"CE"));
+                b3.addActionListener(new ButtonActListener(inputField,"%"));
+                b4.addActionListener(new ButtonActListener(inputField,"/"));
+                b5.addActionListener(new ButtonActListener(inputField,"7"));
+                b6.addActionListener(new ButtonActListener(inputField,"8"));
+                b7.addActionListener(new ButtonActListener(inputField,"9"));
+                b8.addActionListener(new ButtonActListener(inputField,"*"));
+                b9.addActionListener(new ButtonActListener(inputField,"4"));
+                b10.addActionListener(new ButtonActListener(inputField, "5"));
+                b11.addActionListener(new ButtonActListener(inputField,"6"));
+                b12.addActionListener(new ButtonActListener(inputField,"-"));
+                b13.addActionListener(new ButtonActListener(inputField,"1"));
+                b14.addActionListener(new ButtonActListener(inputField,"2"));
+                b15.addActionListener(new ButtonActListener(inputField,"3"));
+                b16.addActionListener(new ButtonActListener(inputField,"+"));
+                b17.addActionListener(new ButtonActListener(inputField,""));
+                b18.addActionListener(new ButtonActListener(inputField,"0"));
+                b19.addActionListener(new ButtonActListener(inputField,"."));
+                b20.addActionListener(new ButtonActListener(inputField,"="));
+
                 
                 //bp(buttonPanel)에 버튼 추가
                 bp.add(b1);
@@ -313,23 +337,62 @@ public class Main {
 			
 	}
 	//버튼 이벤트 클래스
-	class ButtonListener implements ActionListener{
-		private String text;
+	public static class ButtonActListener implements ActionListener{
+		public JTextField label;
+		public String text;
 		
-		public ButtonListener(String text) {
+		public ButtonActListener(JTextField label, String text) {
+			this.label = label;
 			this.text = text;
 		}
 		
 		@Override
-	    public void actionPerformed(ActionEvent e) {
-	        // 이벤트 핸들러 코드 작성
+		public void actionPerformed(ActionEvent e) {
 			String cur = e.getActionCommand();
 			System.out.println(cur);
-	    }
-		
+			
+			if(cur.equals("CE")) { // 전체 초기화 (기록포함)
+				this.label.setText("0");
+			}else if(cur.equals("C")){ //기록초기화X)
+				this.label.setText("0");
+			}else if(this.label.getText().equals("0") && (cur.equals("0") || cur.equals(")"))){
+				this.label.setText("0");
+			}else if(cur.equals("=")){
+				this.label.setText(getCalculate(this.label.getText()));
+			}else if(cur.equals("+") || cur.equals("-") || cur.equals("*") || cur.equals("/") || cur.equals("%")){
+				char preString = this.label.getText().charAt(this.label.getText().length()-1);
+				
+				if(this.label.getText().equals("0")) { // 아무 숫자도 입력되지 않았을 경우
+					if(cur.equals("-")) {
+						this.label.setText(this.text);
+					}else {
+						this.label.setText(this.label.getText() + this.text);
+					}
+				}else {
+					if(cur.equals("%")) {
+						if(preString == '+' || preString == '-' || preString == '*' || preString == '/') { // 앞문자가 숫자가 아니라면
+							this.label.setText(this.label.getText().subSequence(0, this.label.getText().length()-1) + this.text);
+						}else {
+							this.label.setText(this.label.getText() + this.text);
+						}
+					}else { // '+', '-', '*', '/' 연산자 인 경우
+						if(preString == '+' || preString == '-' || preString == '*' || preString == '/'){
+							this.label.setText(this.label.getText().subSequence(0, this.label.getText().length()-1) + this.text);
+						}else {
+							this.label.setText(this.label.getText() + this.text);
+						}
+					}
+				}
+			}else {
+				if(this.label.getText().equals("0")) { 
+					this.label.setText(this.text);
+				}else {
+					this.label.setText(this.label.getText() + this.text);
+				}
+			}
+		}
 		
 	}
-	
 	
 	
 	//후위계산법 계산

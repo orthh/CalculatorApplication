@@ -1,7 +1,5 @@
 package calculator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,8 +8,12 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Stack;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,43 +30,7 @@ public class Main {
 	    		c== '%' || c=='.';
 	}
 	
-	public static double calcValue(String oper, String n1, String n2) {
-		int num1 = Integer.parseInt(n1);
-		int num2 = Integer.parseInt(n2);
-		int result;
-		switch (oper) {
-		case "+":
-			result =  num1 + num2;
-			break;
-		case "-":
-			result =  num1 - num2;
-			break;
-		case "*":
-			result =  num1 * num2;
-			break;
-		case "/":
-			result =  num1 / num2;
-			break;
-		case "%":
-			result =  num1 % num2;
-			break;
-
-		default: result = -9999;
-			break;
-		}
-		
-		
-		return result;
-		
-		
-	}
 	
-	public static ArrayList<String> numArr 
-		= new ArrayList<String>();
-
-	public static ArrayList<String> operArr 
-	= new ArrayList<String>();
-
 
 	public static void main(String[] args) {
 		//입력값 저장
@@ -157,49 +123,11 @@ public class Main {
                     		//inputField입력값 가져오기
                     		String text = inputField.getText();
 	                   		System.out.println(text);
-	                   		//text를 하나하나 거쳐서 연산기호가 나오면 ArrayList에 전 num추가,
 	                   		
-	                   		
-	                   		//숫자 파싱해 numArr에 집어넣기
-	                   		String numRegExp = "[+\\-X%/]";
-	                   		String[] items = text.split(numRegExp);
-	                   		for(String item : items) {
-	                   			Main.numArr.add(item);
-	                   		}
-	                   		for(String item : Main.numArr) {
-	                   			System.out.println(item);
-	                   		}
-	                   		//연산자 파싱해 operArr에 집어넣기
-	                   		String[] opArr = text.split("");
-	                   		for(String item: opArr) {
-	                   			if(item.matches(numRegExp)) {
-	                   				Main.operArr.add(item);
-	                   			}
-	                   		}
-	                   		for(String item : Main.operArr) {
-	                   			System.out.println(item);
-	                   		}
-	                   		//잠시스톱!!!
-	                   		//스택으로 풀면 쉽다함
-	                   		
-	                   		//배열 순서대로 계산
-	                   		//우선순위는 일단 나중에
-	                   		
-	                   		//알고리즘 짜는중
-	                   		int result = 0;
-	                   		int cnt = 0;
-	                   		double temp;
-	                   		for(String item : Main.operArr) {
-	                   			temp = calcValue(item,Main.numArr.get(cnt),Main.numArr.get(cnt+1));
-	                   			System.out.println(temp);
-	                   			cnt++;
-	                   		}
-	                   		
-	                   		//입력값 계산하기
-	                   		
-	                   		//inputField 에 값 표시
-	                   		//inputField.setText();
-	                   		
+	                   		//계산한값 출력
+	                   		inputField.setText(getCalculate(text));;
+	                   	
+
 	                   		//기록에 저장
                     	}else {
                     		 // 입력 무시
@@ -225,7 +153,7 @@ public class Main {
                 JButton b5 = new JButton("7");
                 JButton b6 = new JButton("8");
                 JButton b7 = new JButton("9");
-                JButton b8 = new JButton("X");
+                JButton b8 = new JButton("*");
                 JButton b9 = new JButton("4");
                 JButton b10 = new JButton("5");
                 JButton b11 = new JButton("6");
@@ -383,6 +311,152 @@ public class Main {
 			
 			
 			
+	}
+	//버튼 이벤트 클래스
+	class ButtonListener implements ActionListener{
+		private String text;
+		
+		public ButtonListener(String text) {
+			this.text = text;
+		}
+		
+		@Override
+	    public void actionPerformed(ActionEvent e) {
+	        // 이벤트 핸들러 코드 작성
+			String cur = e.getActionCommand();
+			System.out.println(cur);
+	    }
+		
+		
+	}
+	
+	
+	
+	//후위계산법 계산
+	static String getCalculate(String str) {
+		char operation[] = {'+', '-', '*', '/', '%'};
+		
+		ArrayList<String> postfix = new ArrayList<>();
+		Stack<Character> opStack = new Stack<>();
+		Stack<String> calStack = new Stack<>();
+		String num = "";
+		
+		// -로 시작하는 경우 예외 처리
+		if(str.charAt(0) == '-') {
+			str = "0" + str;
+		}
+		
+		// 후위 연산자로 변경
+		for(int i = 0; i < str.length(); i++) {
+			boolean checkOp = false;
+			for(int j = 0; j < operation.length; j++) {
+				if(str.charAt(i) == operation[j]) {
+					
+					checkOp = true;
+					
+					if(!num.equals("")) {
+						postfix.add(num);
+						num = "";
+					}
+					
+					if(operation[j] == '(') { // '(' 이면 무조건 push
+						opStack.push(operation[j]);
+					}else if(operation[j] == ')') { 
+						// '(' 나오기 전까지 
+						while(opStack.peek() != '(' && !opStack.isEmpty()) {
+							postfix.add(opStack.pop().toString());
+						}
+						// '(' pop
+						opStack.pop();
+					}else {
+						if(opStack.isEmpty()) {
+							opStack.push(operation[j]);
+						}else {
+							if(opOrder(opStack.peek()) < opOrder(operation[j])) {
+								opStack.push(operation[j]);
+							}else {
+								postfix.add(opStack.pop().toString());
+								opStack.push(operation[j]);
+							}
+						}
+					}
+				}
+			}
+			
+			if(!checkOp) {
+				num += str.charAt(i);
+			}
+			
+		}
+		
+		// 남은 숫자 처리
+		if(!num.equals("")) {
+			postfix.add(num);
+		}
+		
+		// 남은 연산자 처리
+		while(!opStack.isEmpty()) {
+			postfix.add(opStack.pop().toString());
+		}
+		
+		// 후위 연산자를 이용해 최종 결과 구하기
+		for(int i = 0; i < postfix.size(); i++) {
+			calStack.push(postfix.get(i));
+			for(int j = 0; j < operation.length; j++) {
+				if(postfix.get(i).charAt(0) == operation[j]) {
+					calStack.pop();
+					Double n2 = Double.parseDouble(calStack.pop());
+					String re = "";
+					
+					if(operation[j] == '%') {
+						re = Double.toString(n2 * 0.01);
+					}else {
+						Double n1 = Double.parseDouble(calStack.pop());
+						if(operation[j] == '+') {
+							re = Double.toString(n1 + n2);
+						}else if(operation[j] == '-') {
+							re = Double.toString(n1 - n2);
+						}else if(operation[j] == '*') {
+							re = Double.toString(n1 * n2);
+						}else if(operation[j] == '/') {
+							re = Double.toString(n1 / n2);
+						}
+					}
+			
+					calStack.push(re);
+				}
+			}
+		}
+		
+		Double result = Double.parseDouble(calStack.pop());
+		String calResult[] = Double.toString(result).split("\\.");
+
+		if(Double.parseDouble(calResult[1]) == 0) {  
+			if(3 <= calResult[1].length() && calResult[1].substring(0, 2).equals("0E")) {
+				return Double.toString(result);
+			}else { // 정수 일때, 
+				return calResult[0];
+			}
+		}else { //실수일때
+			return String.format("%.10f", result);
+		}
+	}
+	
+	//연산자 우선순위
+	// % > X == / > + == - > 나머지
+	static int opOrder(char op) {
+		switch(op) {
+			case '+':
+			case '-':
+				return 1;
+			case '*':
+			case '/':
+				return 2;
+			case '%':
+				return 3;
+			default:
+				return -1;
+		}
 	}
 
 }

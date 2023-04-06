@@ -128,10 +128,7 @@ public class Main {
                     		////엔터 입력시 이벤트
                     		
                     		//inputField입력값 가져오기
-                    		String text = inputField.getText();
-	                   		System.out.println(text);
-	                   		
-
+                    		String text = inputField.getText();                   		
 	                   		//계산한값 출력
 	                   		String result = getCalculate(text);
 	                   		inputField.setText(result);
@@ -150,12 +147,7 @@ public class Main {
                     }
                 });
                 
-                //inputField에 키보드 이벤트 등록
-                
-               
-                ///////////기록칸 조절
-                
-                //위로 정렬
+                //recordField 위로 정렬
                 recordField.setVerticalAlignment(JLabel.TOP);
                 
                 //버튼생성
@@ -180,7 +172,6 @@ public class Main {
                 JButton b19 = new JButton(".");
                 JButton b20 = new JButton("=");
          
-                
                 //버튼 커서 삭제
                 b1.setFocusable(false);
                 b2.setFocusable(false);
@@ -350,7 +341,7 @@ public class Main {
 	public static class ButtonActListener implements ActionListener{
 		public JTextField label;
 		public String text;
-		public JLabel record;
+		public JLabel recordA;
 		
 		public ButtonActListener(JTextField label, String text) {
 			this.label = label;
@@ -359,9 +350,9 @@ public class Main {
 		public ButtonActListener(JTextField label, String text, JLabel record) {
 			this.label = label;
 			this.text = text;
-			this.record = record;
+			this.recordA = record;
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String cur = e.getActionCommand();
@@ -369,13 +360,22 @@ public class Main {
 			
 			if(cur.equals("CE")) { // 전체 초기화 (기록포함)
 				this.label.setText("0");
-				this.record.setText("");
+				//지금 버그있음, 기록칸을 초기화해도 String이 이전데이터 기록하고있음.
+				//위에 addString쪽 버그인듯?
+				//이 클래스 String text초기화 안해서?
+				//해결
+				Main.record = "<html><p>기록</p></html>";
+				this.recordA.setText(Main.record);
 			}else if(cur.equals("C")){ //기록초기화X)
 				this.label.setText("0");
 			}else if(this.label.getText().equals("0") && (cur.equals("0") || cur.equals(")"))){
 				this.label.setText("0");
 			}else if(cur.equals("=")){
 				this.label.setText(getCalculate(this.label.getText()));
+				//record Field
+				//기록 저장
+           		
+           		//기록 출력
 			}else if(cur.equals("+") || cur.equals("-") || cur.equals("*") || cur.equals("/") || cur.equals("%")){
 				char preString = this.label.getText().charAt(this.label.getText().length()-1);
 				

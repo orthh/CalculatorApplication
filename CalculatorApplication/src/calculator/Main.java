@@ -50,6 +50,7 @@ public class Main {
 		
 		// 이벤트 디스패치 스레드에서 실행
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				JFrame frame = new JFrame("계산기");
 				// frame에 패딩값 주기
